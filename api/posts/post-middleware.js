@@ -15,11 +15,14 @@ const validateId = async (req, res, next) => {
 const validateEntries = (req, res, next) => {
   const {title, contents} = req.body
 
-  const validateTitle = !title || typeof 'string' == title
-  const validateContents = !contents || typeof 'string' == title
+  const validateTitle = !title || typeof title !== 'string'
+  const validateContents = !contents || typeof contents !== 'string'
 
   if (validateTitle || validateContents) {
-    res.status(400).json({message: 'Title or Content are missing or invalid'})
+    next({
+      status: 400,
+      message: 'Please provide title and contents for the post',
+    })
   } else {
     req.post = {title: title.trim(), contents: contents.trim()}
     next()
