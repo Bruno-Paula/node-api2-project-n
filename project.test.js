@@ -82,39 +82,39 @@ describe('server.js', () => {
       expect(res.body).toMatchObject(post2)
     }, 500)
     it('on missing title or contents responds with a 400', async () => {
-      let res = await request(server).post('/api/posts').send({ title: 'foo' })
+      let res = await request(server).post('/api/posts').send({title: 'foo'})
       expect(res.status).toBe(400)
-      res = await request(server).post('/api/posts').send({ contents: 'bar' })
+      res = await request(server).post('/api/posts').send({contents: 'bar'})
       expect(res.status).toBe(400)
     }, 500)
   })
   describe('4 [PUT] /api/posts/:id', () => {
     it('responds with updated user', async () => {
       const [id] = await db('posts').insert(post1)
-      const updates = { title: 'xxx', contents: 'yyy' }
+      const updates = {title: 'xxx', contents: 'yyy'}
       const res = await request(server).put(`/api/posts/${id}`).send(updates)
-      expect(res.body).toMatchObject({ id, ...updates })
+      expect(res.body).toMatchObject({id, ...updates})
     }, 500)
     it('saves the updated user to the db', async () => {
       const [id] = await db('posts').insert(post2)
-      const updates = { title: 'aaa', contents: 'bbb' }
+      const updates = {title: 'aaa', contents: 'bbb'}
       await request(server).put(`/api/posts/${id}`).send(updates)
-      let user = await db('posts').where({ id }).first()
-      expect(user).toMatchObject({ id, ...updates })
+      let user = await db('posts').where({id}).first()
+      expect(user).toMatchObject({id, ...updates})
     }, 500)
     it('responds with the correct message & status code on bad id', async () => {
-      const updates = { title: 'xxx', contents: 'yyy' }
+      const updates = {title: 'xxx', contents: 'yyy'}
       const res = await request(server).put('/api/posts/foobar').send(updates)
       expect(res.status).toBe(404)
       expect(res.body.message).toMatch(/does not exist/i)
     }, 500)
     it('responds with the correct message & status code on validation problem', async () => {
       const [id] = await db('posts').insert(post2)
-      let updates = { title: 'xxx' }
+      let updates = {title: 'xxx'}
       let res = await request(server).put(`/api/posts/${id}`).send(updates)
       expect(res.status).toBe(400)
       expect(res.body.message).toMatch(/provide title and contents/i)
-      updates = { contents: 'zzz' }
+      updates = {contents: 'zzz'}
       res = await request(server).put(`/api/posts/${id}`).send(updates)
       expect(res.status).toBe(400)
       expect(res.body.message).toMatch(/provide title and contents/i)
@@ -138,10 +138,10 @@ describe('server.js', () => {
     }, 500)
     it('removes the deleted post from the database', async () => {
       const [id] = await db('posts').insert(post2)
-      let post = await db('posts').where({ id }).first()
+      let post = await db('posts').where({id}).first()
       expect(post).toBeTruthy()
       await request(server).delete('/api/posts/' + id)
-      post = await db('posts').where({ id }).first()
+      post = await db('posts').where({id}).first()
       expect(post).toBeFalsy()
     }, 500)
   })
@@ -155,7 +155,9 @@ describe('server.js', () => {
       await db('posts').insert(post1)
       await db('posts').insert(post2)
       const comments = [
-        { text: 'foo', post_id: 1 }, { text: 'bar', post_id: 1 }, { text: 'baz', post_id: 2 }
+        {text: 'foo', post_id: 1},
+        {text: 'bar', post_id: 1},
+        {text: 'baz', post_id: 2},
       ]
       await db('comments').insert(comments)
       let res = await request(server).get('/api/posts/1/comments')
